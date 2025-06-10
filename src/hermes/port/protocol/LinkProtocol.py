@@ -25,7 +25,8 @@ class LinkProtocol(asyncio.DatagramProtocol):
                  is_client: bool,
                  faultInjector: Optional[ThreadSafeFaultInjector]=None):
         super().__init__()
-        self.HEARTBEAT_INTERVAL = 0.25
+        """ And so it's not just that and the heartbeat interval, I suppose what it really comes down to is whether the Link Protocol is something that works. And in order for it to be "testable" what we can do is set the heartbeat interval to something that is long enough e.g. 10 seconds, to make it possible not to have to make too many concurrent connections. """
+        self.HEARTBEAT_INTERVAL = 100.0
 
         self.logger = logging.getLogger(f"Protocol.{name}")
         self.io = io

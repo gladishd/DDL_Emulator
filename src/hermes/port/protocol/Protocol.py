@@ -21,7 +21,8 @@ class EthernetProtocol(asyncio.DatagramProtocol):
                  is_client: bool,
                  faultInjector: Optional[ThreadSafeFaultInjector]=None):
         super().__init__()
-        self.HEARTBEAT_INTERVAL = 0.25
+        """ Obviously this isn't exactly what we want to do but it is what we know about Ethernet in the sense of instead of having some "race conditions" where we are completely barred from sending any updates unless we decide first along which "wire" to send it..we're going to have something quite different in the sense that the way that Ethernet works, depends "mostly' on the speed at which that information is conveyed across the wire.. """
+        self.HEARTBEAT_INTERVAL = 100.0
 
         self.logger = logging.getLogger(f"Protocol.{name}")
         self.logger.info(f"Protocol {name} initialized")

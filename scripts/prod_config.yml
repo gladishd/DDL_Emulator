@@ -1,15 +1,22 @@
+# And thus the underlying stash-creation command is known as push..what we do is this:
 config:
   protocol: tree
-  log_dir: /opt/hermes/logs
+  log_dir: logs
   log_level:
-    websocket_server: info
-    alice: info
-    charlie: info
-  node_id: sahas
+    websocket_server: debug
+    alice:           debug
+    charlie:         debug
+  node_id: dean
+
 ports:
+  # On the Macbook Pro verison I have temporarily disabled..this thread such that no thread, is started.
   - name: en2
-    interface: en2
+    # type: disconnected     # <- this needs to be disabled
+
+  # Here we don't have to disable things, we can keep them temporarily..such tha twe don't start any thread
   - name: en3
-    interface: en3
+    # type: disconnected     # It doesn't actually need to be disabled in the long run
+
+  # The link to have an active, Thunderbolt-bridge layout
   - name: en4
-    interface: en4
+    interface: bridge0     # We want to test the interface for what it is in its real nature.

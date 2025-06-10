@@ -134,8 +134,13 @@ if __name__ == "__main__":
         format='%(message)s',
         handlers=[logging.StreamHandler()]
     )
+    """ I don't know if this 0.0.0.0 is necessary over say 127.0.0.1 because the idea is to launch on the port..the ports en2 and en3 and en4..on the Mac mini that all bind to
+    fe80::c99:…%bridge0  port 55555   (local)
+    fe80::439:…%bridge0  port 55555   (remote)
+    and the Air has one peer port (sahas:en3) that uses exactly the same pair. Because every Hermes socket is set up with reuse_port = True, macOS lets all three share the same UDP 55555. The first few frames get fanned out to an essentially random receiver, so only one side of the pair completes the hand-shake..the others wait, time out, and drop. When they reopen, the race starts again -> flicker. But that's where we step in beause we have all these topical articles but as you know, topical stuff doesn't work; you have got, to be able to run the Ethernet ports locally such that if you leave "en2" and "en3" running locally, they steal enough traffic from "en4" that the link never stays stable for more than ~1 s.)...
+"""
     server = WebSocketServer(
-        "127.0.0.1", 6363,
+        "0.0.0.0", 6363,
         logger=logging.getLogger("WebSocketServer"),
         command_queue=queue.Queue(),
         message_event=threading.Event()

@@ -2,3 +2,4 @@ scapy>=2.5.0
 psutil
 PyYAML
 websockets
+transitions

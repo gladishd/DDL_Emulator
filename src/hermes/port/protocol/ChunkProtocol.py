@@ -133,39 +133,39 @@ class ChunkProtocol(LinkProtocol):
                         self.transport.sendto(b"LIVENESS", self.sending_addr)
                     self.logger.info("Received LIVENESS, no data to send, responded with LIVENESS")
 
-
     async def _process_send(self):
         """
-        Process sending packets based on state machine state.
-        
-        Only sends data when in RD state:
-        1. Check write_q for data
-        2. If data exists, send it with DATA: prefix
-        3. Transition to RA state to wait for ACK
+        Now, here's where things start getting..a bit more alternating in the bits of the slice protocol..when we close down the extra ports, and that's what it really comes down to..we could always offer to restart Hermes on both machines--and that is how the link should stay solid green..and we know that if we're running several logcical ports per host, then we can give each port its own (local, remote) UDP pair so packets don't collide.for example the Air would use the complementary mapping (bridge0:55556:55555, ...). If we're in RD state and have data -> then we can send the DATA and move to RA..but it doesn't take much data..in fact if we're in RD state and no data -> then we can send LIVENESS only as a keep-alive
         """
         self.logger.info("Process send started")
         try:
             while True:
                 if self.state_machine.state == "RD":
-                    # In Read state, check for data to send
-                    if not self.io.write_q.empty():
+                    if not self.io.write_q.empty():                # and so we know that the data has to be real
                         self.current_data = self.io.write_q.get()
-                        # Send data with DATA: prefix
                         if self.is_client:
                             self.transport.sendto(b"DATA:" + self.current_data)
                         else:
-                            self.transport.sendto(b"DATA:" + self.current_data, self.sending_addr)
+                            self.transport.sendto(
+                                b"DATA:" + self.current_data, self.sending_addr
+                            )
                         self.state_machine.read_complete()
-                        self.logger.info("Sent data, transitioning to RA state")
+                        self.logger.info("Sent DATA, ⇢ RA")
+                    # furthermore..we should keep the libeness ..liveness attribute alive.
                     else:
-                        self.transport.sendto(b"LIVENESS")
-                        self.state_machine.read_complete()
-                        self.logger.info("Sent LIVENESS, transitioning to L state")
+                        if self.is_client:
+                            self.transport.sendto(b"LIVENESS")
+                        else:
+                            self.transport.sendto(
+                                b"LIVENESS", self.sending_addr)
+                        self.logger.debug("Sent LIVENESS")
+                        # And then don't call the read_complete()..the goal is to stay in RD
                 await asyncio.sleep(0)
         except asyncio.CancelledError:
             self.logger.info("Process send cancelled")
         except Exception as e:
             self.logger.error(f"Error in _process_send: {e}", exc_info=True)
+
 
     def get_link_status(self):
         """Return current protocol status including state machine state"""

@@ -23,9 +23,9 @@ class LinkProtocol(asyncio.DatagramProtocol):
                  name: str,
                  sending_addr: IPV6_ADDR,
                  is_client: bool,
-                 faultInjector: Optional[ThreadSafeFaultInjector]=None):
+                 faultInjector: Optional[ThreadSafeFaultInjector] = None):
         super().__init__()
-        self.HEARTBEAT_INTERVAL = 0.25
+        self.HEARTBEAT_INTERVAL = 100.0
 
         self.logger = logging.getLogger(f"Protocol.{name}")
         self.io = io

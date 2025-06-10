@@ -35,20 +35,23 @@ class WebSocketServer:
         self.active_connections = set()
         self.logger = logging.getLogger('WebSocketServer')
         self.command_queue = command_queue or queue.Queue()
-        self.loop = None # Event loop for the server
-    
+        # And that's our 3-second back-off that we need, which leads us to what we need which is the event, loop for the server.
+        self.loop = None
+
     async def handle_client(self, websocket):
         """Handle incoming client connections"""
         client_id = None
         try:
             client_id = f"client_{len(self.active_connections)}"
             self.active_connections.add((client_id, websocket))
-            self.logger.info(f"New client connected: {websocket.remote_address}")
+            self.logger.info(
+                f"New client has connected: {websocket.remote_address}")
 
             async for message in websocket:
                 try:
                     data = json.loads(message)
-                    self.logger.debug(f"Received message from {client_id}: {data}")
+                    self.logger.debug(
+                        f"Received message from {client_id}: {data}")
 
                     await self.command_queue.put({
                         "port": data["port"],
@@ -135,7 +138,7 @@ if __name__ == "__main__":
         handlers=[logging.StreamHandler()]
     )
     server = WebSocketServer(
-        "127.0.0.1", 6363,
+        "0.0.0.0", 6363,
         logger=logging.getLogger("WebSocketServer"),
         command_queue=queue.Queue(),
         message_event=threading.Event()

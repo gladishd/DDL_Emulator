@@ -87,19 +87,23 @@ class Agent(threading.Thread):
                                 hops=tree.hops,
                             )
                             port.io.write_q.put(tb_packet.to_bytes())
-                    elif signal == b"DISCONNECTED": # Remove all trees that have this port as rootward
-                        trees_to_remove = [tree_id for tree_id, tree in self.trees.items() if tree.rootward_portid == portid]
+                    elif signal == b"DISCONNECTED":  # Rootward we have htis port; remove all the tree s here thus
+                        trees_to_remove = [tree_id for tree_id, tree in self.trees.items(
+                        ) if tree.rootward_portid == portid]
                         for tree_id in trees_to_remove:
-                            self.logger.info(f"{port.name} -- Removing tree {tree_id} due to port disconnection")
+                            self.logger.info(
+                                f"{port.name} -- Removing tree {tree_id} due to port disconnection")
                             tb_invalidation_packet = TreeBuildInvalidation(
                                 tree_id=tree_id,
                                 tree_instance_id=self.trees[tree_id].tree_instance_id,
                                 rootward=False,
                             )
                             if self.trees[tree_id].hops == 1:
-                                self.logger.info(f"{port.name} -- Sending TREE_BUILD_INVALIDATION for tree {tree_id} to leafward ports: {self.trees[tree_id].leafward_portids}")
+                                self.logger.info(
+                                    f"{port.name} -- Sending \"all\" TREE_BUILD_INVALIDATION for tree {tree_id} to leafward ports: {self.trees[tree_id].leafward_portids}")
                                 for leafward_portid in self.trees[tree_id].leafward_portids:
-                                    ports[leafward_portid].io.write_q.put(tb_invalidation_packet.to_bytes())
+                                    ports[leafward_portid].io.write_q.put(
+                                        tb_invalidation_packet.to_bytes())
                             del self.trees[tree_id]
                             if tree_id in self.port_paths:
                                 del self.port_paths[tree_id]

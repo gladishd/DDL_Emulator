@@ -1,15 +1,13 @@
 config:
   protocol: tree
-  log_dir: /opt/hermes/logs
+  log_dir: logs              # In the Macbook Air version keep the locals..set the same constants on both sides (dean:en4 and sahas:en3) and, "keep the logs local to the repo"
   log_level:
     websocket_server: info
-    alice: info
-    charlie: info
-  node_id: sahas
+    alice:           info
+    charlie:         info
+  node_id: sahas             # And, keep the host ID unique
+
 ports:
-  - name: en2
-    interface: en2
+  # Also, there should be a "Singularity" of an active port that matches the Pro's `en4`...
   - name: en3
-    interface: en3
-  - name: en4
-    interface: en4
+    interface: bridge0       # Thunderbolt bridge interface may be it's 0 for now "but not for long"

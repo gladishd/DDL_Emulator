@@ -11,11 +11,11 @@ config:
 ports:
   # On the Macbook Pro verison I have temporarily disabled..this thread such that no thread, is started.
   - name: en2
-    # type: disconnected     # <- this needs to be disabled
+    type: disconnected     # <- this needs to be disabled
 
   # Here we don't have to disable things, we can keep them temporarily..such tha twe don't start any thread
   - name: en3
-    # type: disconnected     # It doesn't actually need to be disabled in the long run
+    type: disconnected     # It doesn't actually need to be disabled in the long run
 
   # The link to have an active, Thunderbolt-bridge layout
   - name: en4
